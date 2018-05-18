@@ -5,185 +5,58 @@ Created: 15 May 2018
 Eva Berlot & Naveed Ejaz
 """
 import pandas as pd
-import os
-from RuleIDs import Dir as DR, File as FR, Special as SP
-import toTSV
-import pdb
+from BidsRuleIDs import Dir as DR, File as FR, Special as SP
+from BidsNaming import BidsifyNaming
+import BidsFileIO as fio
+import numpy as np
 
-class Bidsify:
-    subjFile        = None
-    subjData        = None        
-
-    sourceDir       = None
-    destDir         = None   
-    
-
+class Bidsify:    
     # constructor
-    def __init__(self, subj_file, source_dir, dest_dir):
-        self.subjFile   = subj_file
-        self.sourceDir  = source_dir
-        self.destDir    = dest_dir        
-        self.loadSubjFile()
+    def __init__(self):
+        self.namer = BidsifyNaming()
         
-        # setting up new and old naming formats for conversion
-        self.rawFormat  = dict()
-        self.bidsFormat  = dict()
-
         # create list of rules
         self.rules      = list()
         
-    # load subject file into pandas dataframe
-    def loadSubjFile(self):
-        # assumes that file is in root folder of destination directory
-        f               = os.path.join(self.sourceDir,self.subjFile)       
-        if os.path.isfile(f):
-            self.subjData   = pd.read_csv(f, sep='\t')
-        else:
-            print('subject file not found in raw directory')
-
-    # save subject file as tsv
-    def saveParticipantsFile(self):
-        # adding participants identifier to file
-        df = self.subjData.copy()
+    # bids namer needs these file paths
+    def set_directories(self, source, dest):
+        self.namer.set_directories(source,dest)        
         
-        rows, col = df.shape
-        p = list()
-        for i in range(rows):
-            p.append('sub-' + self.makeDirName(i,self.bidsFormat['subj']))
-
-        df['participants-id'] = p
-        
-        # saving file in bids root directory
-        f = os.path.join(self.destDir,'participants.tsv')
-        toTSV.saveToTSV(f,df)
-                
-    # print data stored in each row i for dataframe
-    # depending on experiment design, row could be a single subject, or a session for a subject
-    def printRow(self, i):
-        print(self.subjData.loc[i,:])
-
-    # construct directory name for i-th row using provided columns
-    # FOR INTERNAL USE ONLY
-    def makeDirName(self,i,cols):
-        # depending on experiment design, row could be a single subject, or a session for a subject
-        s = str()
-        for c in cols:
-            if c in self.subjData.columns:
-                s += str(self.subjData.loc[i,c]).strip()
-            else:
-                s += c
-        return s
-    
-    # make required directories for data in i-th row
-    def makeDir(self,i):
-        # get subject and sess dir names for i-th row
-        [subj, ses] = self.get_bids_dir_names(i)
-        
-        # make full path
-        d = os.path.join(self.destDir,subj,ses)
-        
-        if not os.path.isdir(d):
-            os.makedirs(d)
-
+    # bids namer needs the data in the subject file
+    def set_subject_file(self, subject_file):
+        self.namer.set_subject_file(subject_file)        
+                    
     # list of columns defines the subject and session names to be used as 
     # directories names in raw data 
     def set_raw_format(self, subj, ses):
-        self.rawFormat['subj']      = subj
-        self.rawFormat['ses']       = ses
+        self.namer.set_raw_format(subj,ses)
     
     # list of columns defines the subject and session names to be used as 
     # directories names in bids        
     def set_bids_format(self, subj, ses):
-        self.bidsFormat['subj']     = subj
-        self.bidsFormat['ses']      = ses
+        self.namer.set_bids_format(subj,ses)
         
-    # list of columns (in order) defines the subject and session names to be used as 
-    # directories names in bids        
-    def get_bids_dir_names(self, i):
-        subj    = 'sub-' + self.makeDirName(i,self.bidsFormat['subj'])        
-        ses     = 'ses-' + self.makeDirName(i,self.bidsFormat['ses'])
-        return [subj, ses]                
-
-    # list of columns (in order) defines the subject and session names to be used as 
-    # directories names in bids        
-    def get_raw_dir_names(self, i):
-        subj    = self.makeDirName(i,self.rawFormat['subj'])        
-        ses     = self.makeDirName(i,self.rawFormat['ses'])
-        return [subj, ses]                
-
-    def make_raw_dir_path(self, row, rule):
-        # get source base path
-        [subj, ses] = self.get_raw_dir_names(row)
+    # save participant info as tsv in dest directory
+    def save_participants_file(self):
+        # adding participants identifier to file
+        df = self.namer.get_subject_data()
         
-        # starts building order from raw source directory
-        s = self.sourceDir
-        
-        # loop over order in 'order' variable
-        for j in range(len(rule['order'])):
-            # check if this is not subj,sess directory
-            if rule['order'][j] not in [DR.SUBJECT, DR.SESSION]:   
-                s = os.path.join(s,rule['dir_names'][rule['order'][j]])
-            elif rule['order'][j] is DR.SUBJECT:
-                s = os.path.join(s,subj)
-            elif rule['order'][j] is DR.SESSION:
-                s = os.path.join(s,ses)                
+        rows, col = df.shape
+        p = list()
+        for i in range(rows):
+            p.append(self.namer.tags.tSubj + self.namer.get_bids_subj_name(i))
 
-        return s
-    
-    def make_raw_file_name(self, row, rule):
-        # get source base path
-        [subj, ses] = self.get_raw_dir_names(row)
-
-        # starts building file name from empty
-        s = str()
+        df[self.namer.tags.tParticipantID] = p
         
-        # ordering of elements in the file name
-        fname = rule['file_names']
-        
-        # loop over order in 'fname' variable
-        for j in range(len(fname)):
-            if fname[j] is FR.SUBJECT:
-                s += subj
-            elif fname[j] is FR.SESSION:
-                s += ses
-            else:
-                s += fname[j]
-
-        return s    
-
-    # make directory path for specific data type in bids
-    def make_bids_dir_path(self, row, dtype):
-        # get dest base path
-        [subj, ses] = self.get_bids_dir_names(row)
-        
-        # starts building order from raw source directory
-        s = self.destDir
-        
-        if dtype in [FR.BEH, FR.FUNC_TASK, FR.FUNC_REST]:
-            s = os.path.join(s,subj,ses,'func')
-        else:
-            print('undefined data type')
-            s = None
-            
-        return s
-
-    # make file paths for specific data type in bids        
-    def make_bids_file_name(self, row, dtype):
-        # get dest base path
-        [subj, ses] = self.get_bids_dir_names(row)
-
-        # starts building file name from empty
-        s = str()
-        
-        if dtype is FR.BEH:
-            s += subj + '_' + ses + '_task-events.tsv' 
-        else:
-            print('undefined data type')
-            s = ''
-            
-        return s        
-   
-    
+        # saving file in bids root directory
+        f = self.namer.get_participants_file_name()
+        fio.saveToTSV(f,df)
+                
+    # make required directories for data in i-th row
+    def make_ses_dirs(self,i):
+        dpath   = self.namer.get_bids_ses_dir(i)
+        fio.make_directory(dpath)
+                
     # add rule
     def add_rule(self, dtype, file_names, dir_names, order, opt):    
         r                   = dict()
@@ -193,13 +66,10 @@ class Bidsify:
         r['order']          = order
         r['opt']            = opt
         self.rules.append(r)
-
+        
     # apply all available rules to given row data
-    def apply_rule(self, row):        
-        # loop over all rules user has defined
-        N = len(self.rules)
-
-        for j in range(N):
+    def apply_rule(self, row, rules_to_run):        
+        for j in rules_to_run:
             r = self.rules[j]
                 
             # get all options associated with rule
@@ -209,46 +79,73 @@ class Bidsify:
             order       = r['order']
             opt         = r['opt']                        
 
+            print(str(dtype))
+            print("row " + str(row+1) + ': ', end='')
+                                
             # parse over rules            
-            if dtype in FR:
-                # get directory path
-                d   = self.make_raw_dir_path(row,r)
+            if dtype in FR:                
+                # read raw & bids converted files
+                raw     = self.namer.get_raw_file_path_from_rule(row, r)
+                bids    = self.namer.get_bids_file_path_from_dtype(row, dtype)
                 
+                if (raw is None) or (bids is None):
+                    print("skipping")
+                    continue
+                                
                 if dtype is FR.BEH:     # this is a behavioural rule, send to toTSV
-                    # get behavioural file
-                    f       = self.make_raw_file_name(row,r)
-                    f       = os.path.join(d,f)
-                    data    = toTSV.read(f,opt[SP.INCL])
+                    # STEP 1 :load raw behavioural file, convert to tsv and save
+                    data    = fio.readBehavioural(raw,opt[SP.INCL])
+                    outf    = self.namer.get_bids_file_path_from_dtype(row, dtype)
+                    fio.saveToTSV(outf,data)
                     
-                    # write to destination
-                    destDir     = self.make_bids_dir_path(row, dtype)
-                    destFile    = self.make_bids_file_name(row, dtype)
-                    outf        = os.path.join(destDir,destFile)
-                    toTSV.saveToTSV(outf,data)                    
+                    # STEP 2 :(optional)write json file to disk
+                    if FR.BEH_JSON in opt.keys():
+                        data    = opt[FR.BEH_JSON]
+                        outf    = self.namer.get_bids_file_path_from_dtype(row, FR.BEH_JSON)
+                        fio.saveToJSON(outf,data)                    
+
+                elif dtype in [FR.T1, FR.DWI]:     # this is an anatomical image, just rename/copy
+                    fio.copyfile(raw,bids)  
+
+                print('')
             else:
                 print('rule is invalid')
                 
 
     # run conversion of raw data into bids format
     # function loops over all subjects in the subject file and sessions
-    def convert(self):
+    def run_all_rules(self):
         # loop over all subjects
-        rows, cols = self.subjData.shape
+        rows = self.namer.get_participant_rows()
+        
+        # loop over all rules user has defined
+        rules_to_run = range(len(self.rules))
+
+        for i in range(rows):
+            # make directories for subj/ses
+            #self.makeDir(i)
+
+            # apply rules to this row data
+            self.apply_rule(i, rules_to_run)                
+            
+            # get subject and sess dir names for i-th row
+            #[subj, ses] = self.get_bids_dir_names(i)
+            
+    # run a subset of rules given by indices
+    def run_rules(self, rules_to_run):
+        # loop over all subjects
+        rows = self.namer.get_participant_rows()
         
         for i in range(rows):
             # make directories for subj/ses
-            # self.makeDir(i)
+            #self.makeDir(i)
 
             # apply rules to this row data
-            self.apply_rule(i)                
+            self.apply_rule(i, rules_to_run)                
             
             # get subject and sess dir names for i-th row
             #[subj, ses] = self.get_bids_dir_names(i)
             
             
-            
-            
-            
-            
-    
+
                 

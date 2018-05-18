@@ -8,7 +8,7 @@ Eva Berlot & Naveed Ejaz
 from enum import Enum
 
 class Dir(Enum):
-    MODAL           = 0
+    COLUMN          = 0
     SUBJECT         = 1
     SESSION         = 2
     ANATOMICAL      = 3    
@@ -19,17 +19,20 @@ class Dir(Enum):
     PREPROCESSED    = 8
              
 class File(Enum):
-    FILE        = 0
+    COLUMN      = 0
     SUBJECT     = 1
     SESSION     = 2
     BEH         = 3
-    T1          = 4
-    DWI         = 5    
-    FUNC_TASK   = 6
-    FUNC_REST   = 7    
+    BEH_JSON    = 4    
+    T1          = 5
+    DWI         = 6    
+    FUNC_TASK   = 7
+    FUNC_REST   = 8    
 
 class Special(Enum):
     EMPTY       = 0
     INCL        = 1
     EXCL        = 2
+    COL_REPLACE = 3    
+
     
