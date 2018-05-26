@@ -11,12 +11,6 @@ class Dir(Enum):
     COLUMN          = 0
     SUBJECT         = 1
     SESSION         = 2
-    ANATOMICAL      = 3    
-    FIELDMAP        = 4
-    DICOM           = 5
-    BEHAVIOUR       = 6
-    GLM             = 7
-    PREPROCESSED    = 8
              
 class File(Enum):
     COLUMN      = 0
@@ -24,15 +18,18 @@ class File(Enum):
     SESSION     = 2
     BEH         = 3
     BEH_JSON    = 4    
-    T1          = 5
-    DWI         = 6    
-    FUNC_TASK   = 7
-    FUNC_REST   = 8    
+    FUNC_JSON   = 5        
+    T1          = 6
+    DWI         = 7    
+    FUNC_TASK   = 8
+    FUNC_REST   = 9    
 
 class Special(Enum):
     EMPTY       = 0
     INCL        = 1
     EXCL        = 2
-    COL_REPLACE = 3    
+    NAME        = 3   
+    COL_OP      = 4            
+    RUN_NO      = 5  
 
     

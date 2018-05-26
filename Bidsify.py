@@ -9,6 +9,8 @@ from BidsRuleIDs import Dir as DR, File as FR, Special as SP
 from BidsNaming import BidsifyNaming
 import BidsFileIO as fio
 import numpy as np
+import pdb
+
 
 class Bidsify:    
     # constructor
@@ -58,11 +60,10 @@ class Bidsify:
         fio.make_directory(dpath)
                 
     # add rule
-    def add_rule(self, dtype, file_names, dir_names, order, opt):    
+    def add_rule(self, dtype, file_names, order, opt):    
         r                   = dict()
         r['dtype']          = dtype
         r['file_names']     = file_names
-        r['dir_names']      = dir_names
         r['order']          = order
         r['opt']            = opt
         self.rules.append(r)
@@ -75,9 +76,8 @@ class Bidsify:
             # get all options associated with rule
             dtype       = r['dtype']
             file_names  = r['file_names']
-            dir_names   = r['dir_names']            
             order       = r['order']
-            opt         = r['opt']                        
+            opt         = r['opt']            
 
             print(str(dtype))
             print("row " + str(row+1) + ': ', end='')
@@ -86,26 +86,62 @@ class Bidsify:
             if dtype in FR:                
                 # read raw & bids converted files
                 raw     = self.namer.get_raw_file_path_from_rule(row, r)
-                bids    = self.namer.get_bids_file_path_from_dtype(row, dtype)
                 
-                if (raw is None) or (bids is None):
+                if (raw is None):
                     print("skipping")
                     continue
                                 
                 if dtype is FR.BEH:     # this is a behavioural rule, send to toTSV
                     # STEP 1 :load raw behavioural file, convert to tsv and save
                     data    = fio.readBehavioural(raw,opt[SP.INCL])
-                    outf    = self.namer.get_bids_file_path_from_dtype(row, dtype)
+                    outf    = self.namer.get_bids_file_path_from_dtype(row, dtype, opt)
+                    
+                    #   PRIOR TO SAVING
+                    #       - need to check if any renaming or math needs to be done
+                    if SP.COL_OP in opt.keys():
+                        op = opt[SP.COL_OP] # operations to perform
+                        x = data    # data to perform op on: get ptr to pandas, this will propogate to data as well                        
+                        # loop over operations
+                        for sp in range(len(op)):
+                            exec(op[sp])                            
+
                     fio.saveToTSV(outf,data)
                     
                     # STEP 2 :(optional)write json file to disk
                     if FR.BEH_JSON in opt.keys():
                         data    = opt[FR.BEH_JSON]
-                        outf    = self.namer.get_bids_file_path_from_dtype(row, FR.BEH_JSON)
+                        outf    = self.namer.get_bids_file_path_from_dtype(row, FR.BEH_JSON, opt)
                         fio.saveToJSON(outf,data)                    
 
                 elif dtype in [FR.T1, FR.DWI]:     # this is an anatomical image, just rename/copy
+                    bids    = self.namer.get_bids_file_path_from_dtype(row, dtype, opt)
                     fio.copyfile(raw,bids)  
+                    
+                elif dtype in [FR.FUNC_TASK]:       # this is a list of functional images, might contain wildcard
+                    # do i need to search for files?
+                    indx = self.namer.is_wildcard(file_names)
+                    if not(indx==[]):
+                        file_list   = self.namer.search_files_from_wildcard(raw)
+                        tokens      = raw.split('*')
+                        runno       = self.namer.tokenize_run_no(file_list,tokens)
+                        print("Copying in order: {}".format(runno))
+                        runopt = opt.copy()
+                        
+                        for i in range(len(runno)):
+                            runopt[SP.RUN_NO] = runno[i]
+                            bidsf   = self.namer.get_bids_file_path_from_dtype(row,dtype,runopt)
+                            rawf    = file_list[i]  
+                            fio.copyfile(rawf,bidsf)  
+                            
+                            # STEP 2 :(optional)write json file to disk
+                            if FR.FUNC_JSON in opt.keys():                            
+                                data    = opt[FR.FUNC_JSON]
+                                outf    = self.namer.get_bids_file_path_from_dtype(row, FR.FUNC_JSON, runopt)
+                                fio.saveToJSON(outf,data)                    
+                    else:
+                        print('UNDEFINED CONTROL SEQ: in dtype FR.FUNC_TASK')
+
+
 
                 print('')
             else:

@@ -8,6 +8,8 @@ import os
 from BidsRuleIDs import Dir as DR, File as FR, Special as SP
 import BidsFileIO as fio
 from BidsTags import BidsTags
+import glob
+import pdb
 
 class BidsifyNaming:
     sourceDir       = []
@@ -66,6 +68,30 @@ class BidsifyNaming:
                 s += c
         return s
 
+    # if a tokenizer is present in file name, return its index, otherwise empty
+    def is_wildcard(self, fname):
+        # do i need to tokenize run no?
+        tokIndx = []
+        if SP.RUN_NO in fname:
+            tokIndx = fname.index(SP.RUN_NO)
+            
+        return tokIndx
+
+    # construct path for file name from row and provided rule info
+    def search_files_from_wildcard(self, fname):
+        return glob.glob(fname)
+    
+    # construct path for file name from row and provided rule info
+    def tokenize_run_no(self, file_list, tokens):
+        runno_list = list()
+        
+        for i in range(len(file_list)):
+            f = file_list[i]
+            runno_list.append(int(f.split(tokens[0])[1].split(tokens[1])[0]))
+            
+        return runno_list
+        
+        
     # construct path name from row and provided rule info
     def get_raw_dir_path_from_rule(self, row, rule):
         # get source base path
@@ -76,7 +102,7 @@ class BidsifyNaming:
         
         # starts building order from raw source directory
         s = self.sourceDir
-        
+
         # loop over order in 'order' variable
         for j in range(len(order)):
             # check if there element in order is a list
@@ -88,7 +114,8 @@ class BidsifyNaming:
             else:
                 # check if this is not subj,sess directory
                 if order[j] not in [DR.SUBJECT, DR.SESSION]:   
-                    s = os.path.join(s,rule['dir_names'][rule['order'][j]])
+                    #s = os.path.join(s,rule['dir_names'][rule['order'][j]])
+                    s = os.path.join(s,rule['order'][j])
                 elif order[j] is DR.SUBJECT:
                     s = os.path.join(s,subj)
                 elif order[j] is DR.SESSION:
@@ -107,7 +134,7 @@ class BidsifyNaming:
         
         # ordering of elements in the file name
         fname = rule['file_names']
-        
+
         # loop over order in 'fname' variable
         for j in range(len(fname)):
             # check if there element in order is a list
@@ -120,20 +147,23 @@ class BidsifyNaming:
                     s += subj
                 elif fname[j] is FR.SESSION:
                     s += ses
+                elif fname[j] is SP.RUN_NO:
+                    s += '*'
                 else:
                     s += fname[j]
+        
         return s    
 
     # make directory path for specific data type in bids
-    def get_bids_dir_path_from_dtype(self, row, dtype):
+    def get_bids_dir_path_from_dtype(self, row, dtype, opt):
         # get dest base path
         subj    = self.get_bids_subj_name(row)
-        ses     = self.get_bids_ses_name(row)                
-        
+        ses     = self.get_bids_ses_name(row)       
+
         # starts building order from raw source directory
         s = self.destDir
         
-        if dtype in [FR.BEH, FR.BEH_JSON, FR.FUNC_TASK, FR.FUNC_REST]:
+        if dtype in [FR.BEH, FR.BEH_JSON, FR.FUNC_TASK, FR.FUNC_JSON, FR.FUNC_REST]:
             s = os.path.join(s,subj,ses,self.tags.tFunc)
         elif dtype is FR.T1:
             s = os.path.join(s,subj,ses,self.tags.tAnat)            
@@ -146,22 +176,26 @@ class BidsifyNaming:
         return s
 
     # make file paths for specific data type in bids        
-    def get_bids_file_name_from_dtype(self, row, dtype):
+    def get_bids_file_name_from_dtype(self, row, dtype, opt):        
         # get dest base path
         subj    = self.get_bids_subj_name(row)
         ses     = self.get_bids_ses_name(row)                
-
+        
         # starts building file name from empty
         s = subj + '_' + ses + '_'
         
         if dtype is FR.BEH:         # BEHAVIOUR TSV
-            s += self.tags.tFuncEvents + '.tsv'
+            s += (self.tags.tFuncEvents + '.tsv').format(opt[SP.NAME])
         elif dtype is FR.BEH_JSON:  # BEHAVIOUR JSON
-            s += self.tags.tFuncEvents + '.json'
+            s += (self.tags.tFuncEvents + '.json').format(opt[SP.NAME])
         elif dtype is FR.T1:        # ANATOMICAL T1
             s += 'T1w.nii'            
         elif dtype is FR.DWI:       # ANATOMICAL DWI
-            s += 'dwi.nii'                        
+            s += 'dwi.nii'    
+        elif dtype is FR.FUNC_TASK:     # Functional images
+            s += (self.tags.tFuncRun + '.nii').format(opt[SP.NAME],opt[SP.RUN_NO])
+        elif dtype is FR.FUNC_JSON:     # Functional json images
+            s += (self.tags.tFuncRun + '.json').format(opt[SP.NAME],opt[SP.RUN_NO])            
         else:
             print('undefined data type')
             s = ''
@@ -214,13 +248,14 @@ class BidsifyNaming:
             d   = self.get_raw_dir_path_from_rule(i,rule)
             f   = self.get_raw_file_name_from_rule(i,rule)
             return os.path.join(d,f)
+        
         except:
             return None
     
-    def get_bids_file_path_from_dtype(self, i, dtype):
+    def get_bids_file_path_from_dtype(self, i, dtype, opt):
         try:
-            d   = self.get_bids_dir_path_from_dtype(i, dtype)
-            f   = self.get_bids_file_name_from_dtype(i, dtype)        
+            d   = self.get_bids_dir_path_from_dtype(i, dtype, opt)
+            f   = self.get_bids_file_name_from_dtype(i, dtype, opt)        
             return os.path.join(d,f)
         except:
             return None

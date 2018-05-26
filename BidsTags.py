@@ -10,7 +10,8 @@ class BidsTags:
     tSes              = 'ses-'
     tParticipantID    = 'participants-id'   
     tFunc             = 'func'
-    tFuncEvents       = 'task-events'
+    tFuncEvents       = 'task-{}_events'
+    tFuncRun          = 'task-{}_run-{}_bold'    
     tAnat             = 'anat'    
     tDWI              = 'dwi'        
     
