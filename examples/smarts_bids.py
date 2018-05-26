@@ -13,7 +13,7 @@ if __name__ == "__main__":
     bd = Bidsify()
     
     # setting up source and destination directories + subject file
-    bd.set_directories(source='/Volumes/MotorControl/bids/smarts_raw/fmri',dest='/Volumes/MotorControl/bids/smarts_bids/')
+    bd.set_directories(source='/Volumes/MotorControl/bids/smarts_raw/fmri',dest='/Volumes/MotorControl/bids/smarts_bids/raw/)
     bd.set_subject_file('subject_list_copy.txt')
     
     # set formats to correctly convert folders/names
@@ -68,6 +68,10 @@ if __name__ == "__main__":
 #      - rule 5: resting state data
 #
 
+#<<<<<<< Updated upstream
     # execute all the rules
+#=======
+   # execute all the rules
+#>>>>>>> Stashed changes
     bd.run_all_rules()
     

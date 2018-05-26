@@ -48,6 +48,12 @@ def readMatData(filename):
             
     return d
 
+# load and return data in a dat file 
+def readDatData(filename,inclCols):
+    df   = pd.read_csv(filename,sep='\\t',usecols=inclCols,engine='python')
+    
+    return df
+
 # only return data matching given column names
 def includeData(data, inclCols):
     d = dict()
@@ -78,7 +84,7 @@ def readBehavioural(fname, inclCols):
         d   = readMatData(fname)
         df  = toDataframe(d, inclCols)
     elif ext == '.dat':    
-        print('.dat behavioural file reading capability not added yet')
+        df   = readDatData(fname,inclCols)
     else:
         print('unrecognized file type')
         
