@@ -81,5 +81,5 @@ if __name__ == "__main__":
 #=======
    # execute all the rules
 ##>>>>>>> Stashed changes
-   bd.run_all_rules()
+ #  bd.run_all_rules()
     

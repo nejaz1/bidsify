@@ -46,7 +46,7 @@ class Bidsify:
         rows, col = df.shape
         p = list()
         for i in range(rows):
-            p.append(self.namer.tags.tSubj + self.namer.get_bids_subj_name(i))
+            p.append(self.namer.get_bids_subj_name(i))
 
         df[self.namer.tags.tParticipantID] = p
         
