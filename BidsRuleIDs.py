@@ -23,6 +23,7 @@ class File(Enum):
     DWI         = 7    
     FUNC_TASK   = 8
     FUNC_REST   = 9    
+    MASK        = 10
 
 class Special(Enum):
     EMPTY       = 0

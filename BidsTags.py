@@ -14,6 +14,7 @@ class BidsTags:
     tFuncRun          = 'task-{}_run-{}_bold'    
     tAnat             = 'anat'    
     tDWI              = 'dwi'        
+    tMask             = 'masks'
     
     
     fParticipantID    = 'participants.tsv'

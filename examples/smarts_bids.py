@@ -13,7 +13,7 @@ if __name__ == "__main__":
     bd = Bidsify()
     
     # setting up source and destination directories + subject file
-    bd.set_directories(source='/Volumes/MotorControl/bids/smarts_raw/fmri',dest='/Volumes/MotorControl/bids/smarts_bids/raw/)
+    bd.set_directories(source='/Volumes/MotorControl/bids/smarts_raw/fmri',dest='/Volumes/MotorControl/bids/smarts_bids/raw/',deriv='/Volumes/MotorControl/bids/smarts_bids/derivatives')
     bd.set_subject_file('subject_list_copy.txt')
     
     # set formats to correctly convert folders/names
@@ -64,14 +64,22 @@ if __name__ == "__main__":
     opt[FR.FUNC_JSON]   = {'RepetitionTime': 2, 'TaskName': 'smarts'}     
 
     bd.add_rule(dtype,file_names,order,opt)   
+#    
+    # - rule 5: lesion masks
+    dtype       = FR.MASK
+    order       = ['imagingdata',DR.SUBJECT, DR.SESSION]
+    file_names  = ['mask_sess.nii']
+    opt         = []
     
-#      - rule 5: resting state data
+    bd.add_rule(dtype,file_names,order,opt)
+    
+#      - rule 6: resting state data
 #
 
 #<<<<<<< Updated upstream
     # execute all the rules
 #=======
    # execute all the rules
-#>>>>>>> Stashed changes
-    bd.run_all_rules()
+##>>>>>>> Stashed changes
+   bd.run_all_rules()
     
