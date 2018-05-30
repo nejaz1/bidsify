@@ -21,8 +21,8 @@ class Bidsify:
         self.rules      = list()
         
     # bids namer needs these file paths
-    def set_directories(self, source, dest):
-        self.namer.set_directories(source,dest)        
+    def set_directories(self, source, dest, deriv):
+        self.namer.set_directories(source,dest, deriv)        
         
     # bids namer needs the data in the subject file
     def set_subject_file(self, subject_file):
@@ -45,13 +45,10 @@ class Bidsify:
         
         rows, col = df.shape
         p = list()
-        s = list()
         for i in range(rows):
             p.append(self.namer.get_bids_subj_name(i))
-            s.append(self.namer.get_bids_ses_name(i))
 
         df[self.namer.tags.tParticipantID] = p
-        df[self.namer.tags.tSesID] = s
         
         # saving file in bids root directory
         f = self.namer.get_participants_file_name()
@@ -140,8 +137,12 @@ class Bidsify:
                             if FR.FUNC_JSON in opt.keys():                            
                                 data    = opt[FR.FUNC_JSON]
                                 outf    = self.namer.get_bids_file_path_from_dtype(row, FR.FUNC_JSON, runopt)
-                                fio.saveToJSON(outf,data)                    
-                    else:
+                                fio.saveToJSON(outf,data)     
+                                
+                elif dtype in [FR.MASK]:
+                    bids    = self.namer.get_bids_file_path_from_dtype(row, dtype, opt)
+                    fio.copyfile(raw,bids)  
+                else:
                         print('UNDEFINED CONTROL SEQ: in dtype FR.FUNC_TASK')
 
 

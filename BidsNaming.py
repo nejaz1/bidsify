@@ -14,6 +14,7 @@ import pdb
 class BidsifyNaming:
     sourceDir       = []
     destDir         = []
+    derivDir        = []
     subjFile        = []
     
     rawFormat       = []
@@ -30,9 +31,10 @@ class BidsifyNaming:
         self.tags    = BidsTags()
         
     # bids namer needs these file paths
-    def set_directories(self, source, dest):
+    def set_directories(self, source, dest, deriv):
         self.sourceDir  = source
         self.destDir    = dest
+        self.derivDir   = deriv
         
     # bids namer needs these file paths
     def set_subject_file(self, subject_file):
@@ -168,7 +170,10 @@ class BidsifyNaming:
         elif dtype is FR.T1:
             s = os.path.join(s,subj,ses,self.tags.tAnat)            
         elif dtype is FR.DWI:
-            s = os.path.join(s,subj,ses,self.tags.tDWI)                        
+            s = os.path.join(s,subj,ses,self.tags.tDWI)
+        elif dtype is FR.MASK:
+            s = self.derivDir
+            s = os.path.join(s,self.tags.tMask,subj,ses)                        
         else:
             print('undefined data type')
             s = None
@@ -195,7 +200,9 @@ class BidsifyNaming:
         elif dtype is FR.FUNC_TASK:     # Functional images
             s += (self.tags.tFuncRun + '.nii').format(opt[SP.NAME],opt[SP.RUN_NO])
         elif dtype is FR.FUNC_JSON:     # Functional json images
-            s += (self.tags.tFuncRun + '.json').format(opt[SP.NAME],opt[SP.RUN_NO])            
+            s += (self.tags.tFuncRun + '.json').format(opt[SP.NAME],opt[SP.RUN_NO])   
+        elif dtype is FR.MASK:
+            s = 'mask.nii'
         else:
             print('undefined data type')
             s = ''
