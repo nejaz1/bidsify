@@ -8,6 +8,7 @@ Eva Berlot & Naveed Ejaz
 class BidsTags:
     tSubj             = 'sub-'
     tSes              = 'ses-'
+    tSesID            = 'ses-id'
     tParticipantID    = 'participants-id'   
     tFunc             = 'func'
     tFuncEvents       = 'task-{}_events'

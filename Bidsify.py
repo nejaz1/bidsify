@@ -45,10 +45,13 @@ class Bidsify:
         
         rows, col = df.shape
         p = list()
+        s = list()
         for i in range(rows):
-            p.append(self.namer.tags.tSubj + self.namer.get_bids_subj_name(i))
+            p.append(self.namer.get_bids_subj_name(i))
+            s.append(self.namer.get_bids_ses_name(i))
 
         df[self.namer.tags.tParticipantID] = p
+        df[self.namer.tags.tSesID] = s
         
         # saving file in bids root directory
         f = self.namer.get_participants_file_name()
