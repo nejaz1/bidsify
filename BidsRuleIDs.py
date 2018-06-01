@@ -17,13 +17,14 @@ class File(Enum):
     SUBJECT     = 1
     SESSION     = 2
     BEH         = 3
-    BEH_JSON    = 4    
-    FUNC_JSON   = 5        
-    T1          = 6
-    DWI         = 7    
-    FUNC_TASK   = 8
-    FUNC_REST   = 9    
-    MASK        = 10
+    BEH_JSON    = 4   
+    BEH_RAW     = 5
+    FUNC_JSON   = 6        
+    T1          = 7
+    DWI         = 8    
+    FUNC_TASK   = 9
+    FUNC_REST   = 10    
+    MASK        = 11
 
 class Special(Enum):
     EMPTY       = 0

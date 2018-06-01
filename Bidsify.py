@@ -120,7 +120,7 @@ class Bidsify:
                     bids    = self.namer.get_bids_file_path_from_dtype(row, dtype, opt)
                     fio.copyfile(raw,bids)  
                     
-                elif dtype in [FR.FUNC_TASK]:       # this is a list of functional images, might contain wildcard
+                elif dtype in [FR.FUNC_TASK,FR.BEH_RAW]:       # this is a list of functional images, might contain wildcard
                     # do i need to search for files?
                     indx = self.namer.is_wildcard(file_names)
                     if not(indx==[]):

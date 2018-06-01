@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     
     # create rules
-    #   - rule 1: convert behavioural data
+    #   - rule 1a: convert behavioural data
     dtype           = FR.BEH
     order           = ['behavioral', DR.SUBJECT, DR.SESSION]            
     file_names      = [FR.SUBJECT, '_', FR.SESSION, '_IN2.mat']  
@@ -37,6 +37,13 @@ if __name__ == "__main__":
     opt[SP.COL_OP]      = ["x['onset'] = (x['startTR']*2000 + x['startTime'])/1000",
                            "x['duration'] = 4*2"]
     opt[FR.BEH_JSON]    = {'RepetitionTime': 2, 'Instruction': 'Press instructed finger, keeping all other fingers stable'} 
+    
+    # - rule 1b: copy raw behavioural data
+    dtype       = FR.BEH_RAW
+    order       = ['behavioral', DR.SUBJECT, DR.SESSION]    
+    file_names  = [FR.SUBJECT, '_', FR.SESSION, '_IN2_', SP.RUN_NO, '.mat']  
+    opt         = dict()
+    opt[SP.NAME]        = 'smarts'    
     
     bd.add_rule(dtype,file_names,order,opt)
     
@@ -67,7 +74,7 @@ if __name__ == "__main__":
     opt[FR.FUNC_JSON]   = {'RepetitionTime': 2, 'TaskName': 'smarts'}     
 
     bd.add_rule(dtype,file_names,order,opt)   
-#    
+    
     # - rule 5: lesion masks
     dtype       = FR.MASK
     order       = ['imagingdata',DR.SUBJECT, DR.SESSION]
@@ -76,13 +83,10 @@ if __name__ == "__main__":
     
     bd.add_rule(dtype,file_names,order,opt)
     
-#      - rule 6: resting state data
-#
+   # - rule 6: resting state data
 
-#<<<<<<< Updated upstream
-    # execute all the rules
-#=======
+
    # execute all the rules
-##>>>>>>> Stashed changes
- #  bd.run_all_rules()
+
+    bd.run_all_rules()
     

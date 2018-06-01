@@ -16,7 +16,7 @@ class BidsTags:
     tAnat             = 'anat'    
     tDWI              = 'dwi'        
     tMask             = 'masks'
-    
+    tBehRaw           = 'behavior-raw'    
     
     fParticipantID    = 'participants.tsv'
 
