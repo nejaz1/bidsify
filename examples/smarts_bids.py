@@ -38,6 +38,8 @@ if __name__ == "__main__":
                            "x['duration'] = 4*2"]
     opt[FR.BEH_JSON]    = {'RepetitionTime': 2, 'Instruction': 'Press instructed finger, keeping all other fingers stable'} 
     
+    bd.add_rule(dtype,file_names,order,opt)
+    
     # - rule 1b: copy raw behavioural data
     dtype       = FR.BEH_RAW
     order       = ['behavioral', DR.SUBJECT, DR.SESSION]    
