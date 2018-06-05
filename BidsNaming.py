@@ -207,7 +207,6 @@ class BidsifyNaming:
         elif dtype is FR.BEH_RAW:        # Raw behavioural files
             s += (self.tags.tFuncRun + '.mat').format(opt[SP.NAME],opt[SP.RUN_NO])
         elif dtype is FR.MASK:
-            s = 'mask.nii'
             s = opt[SP.NAME]   
         else:
             print('undefined data type')
