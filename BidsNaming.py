@@ -176,7 +176,10 @@ class BidsifyNaming:
             s = os.path.join(s,self.tags.tMask,subj,ses)        
         elif dtype is FR.BEH_RAW:
             s = self.derivDir
-            s = os.path.join(s,self.tags.tBehRaw,subj,ses,)
+            s = os.path.join(s,self.tags.tBehRaw,subj,ses)
+        elif dtype is FR.SURF:
+            s = self.derivDir
+            s = os.path.join(s,self.tags.tSurface)
         else:
             print('undefined data type')
             s = None
@@ -208,6 +211,8 @@ class BidsifyNaming:
             s += (self.tags.tFuncRun + '.mat').format(opt[SP.NAME],opt[SP.RUN_NO])
         elif dtype is FR.MASK:
             s = opt[SP.NAME]   
+        elif dtype is FR.SURF:
+            s = 'x'+subj
         else:
             print('undefined data type')
             s = ''

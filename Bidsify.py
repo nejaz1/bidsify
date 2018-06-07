@@ -10,6 +10,8 @@ from BidsNaming import BidsifyNaming
 import BidsFileIO as fio
 import numpy as np
 import pdb
+import shutil
+import os
 
 
 class Bidsify:    
@@ -144,7 +146,12 @@ class Bidsify:
                                 
                 elif dtype in [FR.MASK]:
                     bids    = self.namer.get_bids_file_path_from_dtype(row, dtype, opt)
-                    fio.copyfile(raw,bids)  
+                    fio.copyfile(raw,bids) 
+                    
+                elif dtype in [FR.SURF]:     # this is the caret surface map, just copy
+                    bids    = self.namer.get_bids_file_path_from_dtype(row, dtype, opt)
+                    if not os.path.exists(bids):
+                        shutil.copytree(raw,bids)  
                 else:
                         print('UNDEFINED CONTROL SEQ: in dtype FR.FUNC_TASK')
 

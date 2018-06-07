@@ -17,6 +17,7 @@ class BidsTags:
     tDWI              = 'dwi'        
     tMask             = 'masks'
     tBehRaw           = 'behavior-raw'    
+    tSurface          = 'surface'
     
     fParticipantID    = 'participants.tsv'
 

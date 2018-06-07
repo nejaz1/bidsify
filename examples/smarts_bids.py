@@ -28,17 +28,17 @@ if __name__ == "__main__":
     
     # create rules
     #   - rule 1a: convert behavioural data
-#    dtype           = FR.BEH
-#    order           = ['behavioral', DR.SUBJECT, DR.SESSION]            
-#    file_names      = [FR.SUBJECT, '_', FR.SESSION, '_IN2.mat']  
-#    opt                 = dict()
-#    opt[SP.NAME]        = 'smarts'    
-#    opt[SP.INCL]        = ['BN','TN','startTR','startTime','hand', 'digit','points']
-#    opt[SP.COL_OP]      = ["x['onset'] = (x['startTR']*2000 + x['startTime'])/1000",
-#                           "x['duration'] = 4*2"]
-#    opt[FR.BEH_JSON]    = {'RepetitionTime': 2, 'Instruction': 'Press instructed finger, keeping all other fingers stable'} 
-#    
-#    bd.add_rule(dtype,file_names,order,opt)
+    dtype           = FR.BEH
+    order           = ['behavioral', DR.SUBJECT, DR.SESSION]            
+    file_names      = [FR.SUBJECT, '_', FR.SESSION, '_IN2.mat']  
+    opt                 = dict()
+    opt[SP.NAME]        = 'smarts'    
+    opt[SP.INCL]        = ['BN','TN','startTR','startTime','hand', 'digit','points']
+    opt[SP.COL_OP]      = ["x['onset'] = (x['startTR']*2000 + x['startTime'])/1000",
+                           "x['duration'] = 4*2"]
+    opt[FR.BEH_JSON]    = {'RepetitionTime': 2, 'Instruction': 'Press instructed finger, keeping all other fingers stable'} 
+    
+    bd.add_rule(dtype,file_names,order,opt)
     
     # - rule 1b: copy raw behavioural data
     dtype       = FR.BEH_RAW
@@ -90,6 +90,14 @@ if __name__ == "__main__":
     order       = ['anatomicals', DR.SUBJECT, [DR.COLUMN, 'RefT1']]    
     file_names  = ['lesion_T1.nii']  
     opt         = {SP.NAME: 'lesion_mask.nii'}
+    
+    bd.add_rule(dtype,file_names,order,opt)
+    
+    # - rule 7: copy surface reconstructions
+    dtype       = FR.SURF
+    order       = ['surface_caret']
+    file_names  = ['x',FR.SUBJECT]
+    opt         = []
     
     bd.add_rule(dtype,file_names,order,opt)
     

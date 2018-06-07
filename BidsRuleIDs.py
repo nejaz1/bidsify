@@ -25,6 +25,7 @@ class File(Enum):
     FUNC_TASK   = 9
     FUNC_REST   = 10    
     MASK        = 11
+    SURF        = 12
 
 class Special(Enum):
     EMPTY       = 0
