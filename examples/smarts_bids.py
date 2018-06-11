@@ -76,8 +76,17 @@ if __name__ == "__main__":
     opt[FR.FUNC_JSON]   = {'RepetitionTime': 2, 'TaskName': 'smarts'}     
 
     bd.add_rule(dtype,file_names,order,opt)   
+    
+    # - rule 5: functional movement pararmeters
+    dtype       = FR.FUNC_MOV
+    order       = ['imagingdata', DR.SUBJECT, DR.SESSION]    
+    file_names  = ['rp_a', FR.SUBJECT, '_', FR.SESSION, '_', 'MF', SP.RUN_NO, '.txt']
+    opt         = dict()
+    opt[SP.NAME]        = 'smarts'   
+    
+    bd.add_rule(dtype,file_names,order,opt)
 
-    # - rule 5: functional mask
+    # - rule 6: functional mask
     dtype       = FR.MASK
     order       = ['imagingdata',DR.SUBJECT, DR.SESSION]
     file_names  = ['mask_sess.nii']
@@ -85,7 +94,7 @@ if __name__ == "__main__":
     
     bd.add_rule(dtype,file_names,order,opt)
     
-    #   - rule 6: copy lesion masks
+    #   - rule 7: copy lesion masks
     dtype       = FR.MASK
     order       = ['anatomicals', DR.SUBJECT, [DR.COLUMN, 'RefT1']]    
     file_names  = ['lesion_T1.nii']  
@@ -93,7 +102,7 @@ if __name__ == "__main__":
     
     bd.add_rule(dtype,file_names,order,opt)
     
-    # - rule 7: copy surface reconstructions
+    # - rule 8: copy surface reconstructions
     dtype       = FR.SURF
     order       = ['surface_caret']
     file_names  = ['x',FR.SUBJECT]
@@ -101,10 +110,10 @@ if __name__ == "__main__":
     
     bd.add_rule(dtype,file_names,order,opt)
     
-   # - rule 6: resting state data
+    #- rule 6: resting state data
 
 
-   # execute all the rules
+    execute all the rules
 
   #  bd.run_all_rules()
     

@@ -180,6 +180,9 @@ class BidsifyNaming:
         elif dtype is FR.SURF:
             s = self.derivDir
             s = os.path.join(s,self.tags.tSurface)
+        elif dtype is FR.FUNC_MOV:
+            s = self.derivDir
+            s = os.path.join(s,self.tags.tMovPar,subj,ses)
         else:
             print('undefined data type')
             s = None
@@ -207,6 +210,8 @@ class BidsifyNaming:
             s += (self.tags.tFuncRun + '.nii').format(opt[SP.NAME],opt[SP.RUN_NO])
         elif dtype is FR.FUNC_JSON:     # Functional json images
             s += (self.tags.tFuncRun + '.json').format(opt[SP.NAME],opt[SP.RUN_NO])   
+        elif dtype is FR.FUNC_MOV:
+            s += (self.tags.tFuncRun + '.txt').format(opt[SP.NAME],opt[SP.RUN_NO])
         elif dtype is FR.BEH_RAW:        # Raw behavioural files
             s += (self.tags.tFuncRun + '.mat').format(opt[SP.NAME],opt[SP.RUN_NO])
         elif dtype is FR.MASK:

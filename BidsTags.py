@@ -18,6 +18,7 @@ class BidsTags:
     tMask             = 'masks'
     tBehRaw           = 'behavior-raw'    
     tSurface          = 'surface'
+    tMovPar           = 'movement-param'
     
     fParticipantID    = 'participants.tsv'
 

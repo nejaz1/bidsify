@@ -24,8 +24,9 @@ class File(Enum):
     DWI         = 8    
     FUNC_TASK   = 9
     FUNC_REST   = 10    
-    MASK        = 11
-    SURF        = 12
+    FUNC_MOV    = 11
+    MASK        = 12
+    SURF        = 13
 
 class Special(Enum):
     EMPTY       = 0
