@@ -19,14 +19,15 @@ class File(Enum):
     BEH         = 3
     BEH_JSON    = 4   
     BEH_RAW     = 5
-    FUNC_JSON   = 6        
-    T1          = 7
-    DWI         = 8    
-    FUNC_TASK   = 9
-    FUNC_REST   = 10    
-    FUNC_MOV    = 11
-    MASK        = 12
-    SURF        = 13
+    BEH_MVC     = 6
+    FUNC_JSON   = 7        
+    T1          = 8
+    DWI         = 9    
+    FUNC_TASK   = 10
+    FUNC_REST   = 11    
+    FUNC_MOV    = 12
+    MASK        = 13
+    SURF        = 14
 
 class Special(Enum):
     EMPTY       = 0

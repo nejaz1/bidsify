@@ -122,6 +122,15 @@ class Bidsify:
                     bids    = self.namer.get_bids_file_path_from_dtype(row, dtype, opt)
                     fio.copyfile(raw,bids)  
                     
+                elif dtype in [FR.BEH_MVC]:
+                    # load raw behavioural file, check if subject has mvc
+                    df      = self.namer.get_subject_data()
+                    column  = df[opt[SP.INCL]]  # include only the relevant column which contains mvc info
+                    if column.loc[row].any():
+                        bids    = self.namer.get_bids_file_path_from_dtype(row, dtype, opt)
+                        fio.copyfile(raw,bids)
+                        
+                
                 elif dtype in [FR.FUNC_TASK,FR.BEH_RAW,FR.FUNC_MOV]:       # this is a list of functional images, might contain wildcard
                     # do i need to search for files?
                     indx = self.namer.is_wildcard(file_names)

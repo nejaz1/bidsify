@@ -177,6 +177,9 @@ class BidsifyNaming:
         elif dtype is FR.BEH_RAW:
             s = self.derivDir
             s = os.path.join(s,self.tags.tBehRaw,subj,ses)
+        elif dtype is FR.BEH_MVC:
+            s = self.derivDir
+            s = os.path.join(s,self.tags.tBehRaw,subj,ses)
         elif dtype is FR.SURF:
             s = self.derivDir
             s = os.path.join(s,self.tags.tSurface)
@@ -214,6 +217,8 @@ class BidsifyNaming:
             s += (self.tags.tFuncRun + '.txt').format(opt[SP.NAME],opt[SP.RUN_NO])
         elif dtype is FR.BEH_RAW:        # Raw behavioural files
             s += (self.tags.tFuncRun + '.mat').format(opt[SP.NAME],opt[SP.RUN_NO])
+        elif dtype is FR.BEH_MVC:
+            s += (self.tags.tMVC + '.mat')
         elif dtype is FR.MASK:
             s = opt[SP.NAME]   
         elif dtype is FR.SURF:
