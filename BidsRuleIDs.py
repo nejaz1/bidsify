@@ -13,21 +13,22 @@ class Dir(Enum):
     SESSION         = 2
              
 class File(Enum):
-    COLUMN      = 0
-    SUBJECT     = 1
-    SESSION     = 2
-    BEH         = 3
-    BEH_JSON    = 4   
-    BEH_RAW     = 5
-    BEH_MVC     = 6
-    FUNC_JSON   = 7        
-    T1          = 8
-    DWI         = 9    
-    FUNC_TASK   = 10
-    FUNC_REST   = 11    
-    FUNC_MOV    = 12
-    MASK        = 13
-    SURF        = 14
+    COLUMN          = 0
+    SUBJECT         = 1
+    SESSION         = 2
+    BEH             = 3
+    BEH_JSON        = 4   
+    BEH_RAW         = 5
+    BEH_MVC         = 6
+    FUNC_JSON       = 7        
+    T1              = 8
+    DWI             = 9    
+    FUNC_TASK       = 10
+    FUNC_TASK_PREP  = 11
+    FUNC_REST       = 12   
+    FUNC_MOV        = 13
+    MASK            = 14
+    SURF            = 15
 
 class Special(Enum):
     EMPTY       = 0

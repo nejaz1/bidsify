@@ -186,6 +186,9 @@ class BidsifyNaming:
         elif dtype is FR.FUNC_MOV:
             s = self.derivDir
             s = os.path.join(s,self.tags.tMovPar,subj,ses)
+        elif dtype is FR.FUNC_TASK_PREP:
+            s = self.derivDir
+            s = os.path.join(s,self.tags.tFuncPrep,subj,ses)
         else:
             print('undefined data type')
             s = None
@@ -209,7 +212,7 @@ class BidsifyNaming:
             s += 'T1w.nii'            
         elif dtype is FR.DWI:       # ANATOMICAL DWI
             s += 'dwi.nii'    
-        elif dtype is FR.FUNC_TASK:     # Functional images
+        elif dtype in [FR.FUNC_TASK, FR.FUNC_TASK_PREP]:     # Functional images
             s += (self.tags.tFuncRun + '.nii').format(opt[SP.NAME],opt[SP.RUN_NO])
         elif dtype is FR.FUNC_JSON:     # Functional json images
             s += (self.tags.tFuncRun + '.json').format(opt[SP.NAME],opt[SP.RUN_NO])   
@@ -218,7 +221,7 @@ class BidsifyNaming:
         elif dtype is FR.BEH_RAW:        # Raw behavioural files
             s += (self.tags.tFuncRun + '.mat').format(opt[SP.NAME],opt[SP.RUN_NO])
         elif dtype is FR.BEH_MVC:
-            s += (self.tags.tMVC + '.mat')
+            s += (self.tags.tMVC + '_00.mat')
         elif dtype is FR.MASK:
             s = opt[SP.NAME]   
         elif dtype is FR.SURF:

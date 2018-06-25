@@ -20,6 +20,7 @@ class BidsTags:
     tSurface          = 'surface'
     tMovPar           = 'movement-param'
     tMVC              = 'MVC'
+    tFuncPrep         = 'func-preprocess'
     
     fParticipantID    = 'participants.tsv'
 

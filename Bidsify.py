@@ -131,7 +131,7 @@ class Bidsify:
                         fio.copyfile(raw,bids)
                         
                 
-                elif dtype in [FR.FUNC_TASK,FR.BEH_RAW,FR.FUNC_MOV]:       # this is a list of functional images, might contain wildcard
+                elif dtype in [FR.FUNC_TASK,FR.BEH_RAW,FR.FUNC_MOV,FR.FUNC_TASK_PREP]:       # this is a list of functional images, might contain wildcard
                     # do i need to search for files?
                     indx = self.namer.is_wildcard(file_names)
                     if not(indx==[]):
